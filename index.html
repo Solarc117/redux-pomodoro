@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- This project utilizes fontAwesome icons. Here's a link to their license: https://fontawesome.com/license. -->
+    <link rel="shortcut icon" href="favicon.svg" type="image/x-icon" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pomodoro</title>
+  </head>
+  <body>
+    <div class="header">
+      <svg id="leaves" focusable="false" viewBox="0 0 512 512">
+        <path
+          fill="currentColor"
+          d="M64 96H0c0 123.7 100.3 224 224 224v144c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V320C288 196.3 187.7 96 64 96zm384-64c-84.2 0-157.4 46.5-195.7 115.2 27.7 30.2 48.2 66.9 59 107.6C424 243.1 512 147.9 512 32h-64z"
+        ></path>
+      </svg>
+    </div>
+    <form id="main">
+      <div class="sections">
+        <div class="section" id="focus">
+          <p class="settingTitle">Focus session</p>
+          <div class="settingContainer">
+            <input onfocus="this.select();" required class="setting" type="number" value="25" min="1" max="300" step="1" data-setting="focus"/>
+            <p class="unit">minutes</p>
+          </div>
+        </div>
+        <div class="section" id="shortBreak">
+          <p class="settingTitle">Short break</p>
+          <div class="settingContainer">
+            <input onfocus="this.select();" required class="setting" type="number" value="5" min="1" max="300" step="1" data-setting="shortBreak"/>
+            <p class="unit">minutes</p>
+          </div>
+        </div>
+        <div class="section" id="longBreak">
+          <p class="settingTitle">Long break</p>
+          <div class="settingContainer">
+            <input onfocus="this.select();" required class="setting" type="number" value="15" min="1" max="300" step="1" data-setting="longBreak"/>
+            <p class="unit">minutes</p>
+          </div>
+        </div>
+        <div class="section" id="sessions">
+          <p class="settingTitle">Sessions per cycle</p>
+          <div class="settingContainer">
+            <input onfocus="this.select();" required class="setting" type="number"  value="4" min="1" max="10" step="1" data-setting="sessions"/>
+            <p class="unit">sessions</p>
+          </div>
+        </div>
+        <div class="section" id="cycles">
+          <p class="settingTitle">Cycles</p>
+          <div class="settingContainer">
+            <input onfocus="this.select();" required class="setting" type="number" value="1" min="1" max="10" step="1" data-setting="cycles"/>
+            <p class="unit"> cycles</p>
+          </div>
+        </div>
+      </div>
+      <button class="pomodoroStart" type="submit">Start</button>
+    </form>
+    <div class="quote">
+      <blockquote class="quoteText">
+        <svg class="quoteSVG" focusable="false" viewBox="0 0 512 512">
+          <path
+            fill="currentColor"
+            d="M464 256h-80v-64c0-35.3 28.7-64 64-64h8c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24h-8c-88.4 0-160 71.6-160 160v240c0 26.5 21.5 48 48 48h128c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48zm-288 0H96v-64c0-35.3 28.7-64 64-64h8c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24h-8C71.6 32 0 103.6 0 192v240c0 26.5 21.5 48 48 48h128c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48z"
+          ></path>
+        </svg>
+      </blockquote>
+      <p class="quoteAuthor">
+      </p>
+    </div>
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
