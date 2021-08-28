@@ -17,11 +17,13 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  /* min-width: 100vw; */
+  overflow: hidden;
   color: white;
   background-color: var(--main-color);
   font-family: "Rubik", sans-serif;
   font-size: var(--font-size);
+  display: flex;
+  flex-direction: column;
 }
 ::selection {
   background: var(--active-color);
@@ -35,6 +37,7 @@ body {
   background: var(--side-color);
   border-radius: 5px;
 }
+/* <header> */
 .header {
   background: var(--side-color);
   width: 100%;
@@ -44,6 +47,18 @@ body {
   height: 40px;
   /* Divided the side margin by 2, and subtracted half of the svg's width to center it. */
   margin: 5px calc(100% / 2 - 20px);  
+}
+/* </header> */
+/* <timer> */
+.scroll {
+  flex-grow: 1;
+  width: 200%;
+  display: flex;
+  flex-direction: row;
+}
+.scroll > #main, .timer {
+  width: 50%;
+  margin: 0;
 }
 .section {
   width: 100%;
@@ -92,14 +107,11 @@ body {
 .setting::-webkit-outer-spin-button,
 .setting::-webkit-inner-spin-button {
   -webkit-appearance: none;
-  /* margin: 0; */
 }
 .setting[type=number] {
   -moz-appearance: textfield;
 }
 .unit {
-  /* width: min-content; */
-  /* margin: 0 5px; */
   margin: 0 0 0 5px;
 }
 .pomodoroStart {
@@ -116,15 +128,18 @@ body {
 .pomodoroStart:active, .pomodoroStart:hover {
   background: var(--active-color);
 }
-/* Blockquote contains the quote svg and quote text, while the p contains the author and source work if applicable. */
-/* .quote blockquote svg {
-  height: 30px;
+
+.currentTime {
+  text-align: center;
+  font-size: 100px;
+  margin: 30px 0;
 }
-.quote blockquote {
-  margin-top: 0;
-  margin-bottom: 3px;
-} */
+/* </timer> */
+
+/* <quotes> */
+/* Blockquote contains the quote svg and quote text, while the p contains the author and source work if applicable. */
 .quote {
+  justify-self: end;
   margin-bottom: 5%;
 }
 .quoteText {
@@ -140,3 +155,4 @@ body {
 .quoteAuthor {
   margin: 0 0 0 100px;
 }
+/* </quotes> */

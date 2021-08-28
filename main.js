@@ -167,14 +167,13 @@ function handleChange(event) {
 }
 
 // Render the timer when form submits.
-const form = document.querySelector("#main");
-const quoteDiv = document.querySelector(".quote");
-form.onsubmit = handleSubmit;
+document.querySelector("#main").onsubmit = handleSubmit;
 function handleSubmit(event) {
   // The "main" form that triggers the timer screen once .pomodoroStart is pressed.
   // State should have been changed by this point, so I would access the values using store.getState().
   // Remember to check that all the values in store are of a valid format (typeof numbers and within the correct range), and if not  prompt the user to reload the page.
   const settings = store.getState().settings;
+  const scrollElement = document.querySelector(".scroll");
   event.preventDefault();
   try {
     for (let key in settings) {
@@ -198,16 +197,15 @@ function handleSubmit(event) {
 
     const keyframes = [
       {
-        transform: "translate(-100%)",
+        transform: "translate(-50%)",
       }
     ];
     const options = {
-      duration: 500,
+      duration: 750,
       fill: "forwards",
-      easing: "ease-in"
+      easing: "ease-in-out"
     }
-    form.animate(keyframes, options);
-    quoteDiv.animate(keyframes, options);
+    scrollElement.animate(keyframes, options);
 
   } catch (err) {
     console.error(err);

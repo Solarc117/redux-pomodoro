@@ -24,46 +24,52 @@
         ></path>
       </svg>
     </div>
-    <form id="main">
-      <div class="sections">
-        <div class="section" id="focus">
-          <p class="settingTitle">Focus session</p>
-          <div class="settingContainer">
-            <input onfocus="this.select();" required class="setting" type="number" value="25" min="1" max="300" step="1" data-setting="focus"/>
-            <p class="unit">minutes</p>
+    <div class="scroll">
+      <form id="main">
+        <div class="sections">
+          <div class="section" id="focus">
+            <p class="settingTitle">Focus session</p>
+            <div class="settingContainer">
+              <input onfocus="this.select();" required class="setting" type="number" value="25" min="1" max="300" step="1" data-setting="focus"/>
+              <p class="unit">minutes</p>
+            </div>
+          </div>
+          <div class="section" id="shortBreak">
+            <p class="settingTitle">Short break</p>
+            <div class="settingContainer">
+              <input onfocus="this.select();" required class="setting" type="number" value="5" min="1" max="300" step="1" data-setting="shortBreak"/>
+              <p class="unit">minutes</p>
+            </div>
+          </div>
+          <div class="section" id="longBreak">
+            <p class="settingTitle">Long break</p>
+            <div class="settingContainer">
+              <input onfocus="this.select();" required class="setting" type="number" value="15" min="1" max="300" step="1" data-setting="longBreak"/>
+              <p class="unit">minutes</p>
+            </div>
+          </div>
+          <div class="section" id="sessions">
+            <p class="settingTitle">Sessions per cycle</p>
+            <div class="settingContainer">
+              <input onfocus="this.select();" required class="setting" type="number"  value="4" min="1" max="10" step="1" data-setting="sessions"/>
+              <p class="unit">sessions</p>
+            </div>
+          </div>
+          <div class="section" id="cycles">
+            <p class="settingTitle">Cycles</p>
+            <div class="settingContainer">
+              <input onfocus="this.select();" required class="setting" type="number" value="1" min="1" max="10" step="1" data-setting="cycles"/>
+              <p class="unit">cycles</p>
+            </div>
           </div>
         </div>
-        <div class="section" id="shortBreak">
-          <p class="settingTitle">Short break</p>
-          <div class="settingContainer">
-            <input onfocus="this.select();" required class="setting" type="number" value="5" min="1" max="300" step="1" data-setting="shortBreak"/>
-            <p class="unit">minutes</p>
-          </div>
-        </div>
-        <div class="section" id="longBreak">
-          <p class="settingTitle">Long break</p>
-          <div class="settingContainer">
-            <input onfocus="this.select();" required class="setting" type="number" value="15" min="1" max="300" step="1" data-setting="longBreak"/>
-            <p class="unit">minutes</p>
-          </div>
-        </div>
-        <div class="section" id="sessions">
-          <p class="settingTitle">Sessions per cycle</p>
-          <div class="settingContainer">
-            <input onfocus="this.select();" required class="setting" type="number"  value="4" min="1" max="10" step="1" data-setting="sessions"/>
-            <p class="unit">sessions</p>
-          </div>
-        </div>
-        <div class="section" id="cycles">
-          <p class="settingTitle">Cycles</p>
-          <div class="settingContainer">
-            <input onfocus="this.select();" required class="setting" type="number" value="1" min="1" max="10" step="1" data-setting="cycles"/>
-            <p class="unit">cycles</p>
-          </div>
-        </div>
+        <button class="pomodoroStart" type="submit">Start</button>
+      </form>
+      <div class="timer">
+        <p class="currentTime">25:00</p>
+        <p class="currentCycle"></p>
       </div>
-      <button class="pomodoroStart" type="submit">Start</button>
-    </form>
+    </div>
     <div class="quote">
       <blockquote class="quoteText">
         <svg class="quoteSVG" focusable="false" viewBox="0 0 512 512">
