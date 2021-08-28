@@ -167,28 +167,49 @@ function handleChange(event) {
 }
 
 // Render the timer when form submits.
-const settings = store.getState().settings;
 const form = document.querySelector("#main");
 const quoteDiv = document.querySelector(".quote");
-form.onsubmit = function (event) {
+form.onsubmit = handleSubmit;
+function handleSubmit(event) {
   // The "main" form that triggers the timer screen once .pomodoroStart is pressed.
   // State should have been changed by this point, so I would access the values using store.getState().
   // Remember to check that all the values in store are of a valid format (typeof numbers and within the correct range), and if not  prompt the user to reload the page.
+  const settings = store.getState().settings;
   event.preventDefault();
-  for (let key in settings) {
-    log(
-      `comparing ${settings[key]} and ${parseFloat(
-        document.querySelector(`[data-setting="${key}"]`).value
-      )}`
-    );
-    if (
-      typeof settings[key] !== "number" ||
-      settings[key] !==
-        parseFloat(document.querySelector(`[data-setting="${key}"]`).value)
-    ) {
-      alert("Something went wrong, please refresh and try again.");
-      return;
+  try {
+    for (let key in settings) {
+      const currentSetting = settings[key];
+      // prettier-ignore
+      const correspondingInputValue = parseFloat(document.querySelector(`[data-setting="${key}"]`).value);
+      function notify() {
+        alert("Something went wrong, please refresh and try again.");
+      }
+
+      if (typeof currentSetting !== "number") {
+        notify();
+        throw new Error(`${currentSetting} is not of type num.`);
+      }
+      if (currentSetting !== correspondingInputValue) {
+        notify();
+        // prettier-ignore
+        throw new Error(`${currentSetting} does not match ${correspondingInputValue}`);
+      }
     }
+
+    const keyframes = [
+      {
+        transform: "translate(-100%)",
+      }
+    ];
+    const options = {
+      duration: 500,
+      fill: "forwards",
+      easing: "ease-in"
+    }
+    form.animate(keyframes, options);
+    quoteDiv.animate(keyframes, options);
+
+  } catch (err) {
+    console.error(err);
   }
-  log("Success!");
 };
