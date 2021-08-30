@@ -147,12 +147,12 @@ quoteAuthor.append(randomQuote.author);
 // Listen for changes by the user.
 const settingInputs = Array.from(document.getElementsByClassName("setting"));
 settingInputs.forEach(setting => {
-  setting.addEventListener("blur", handleBlur);
+  // setting.addEventListener("blur", handleBlur);
   setting.addEventListener("change", handleChange);
 });
-function handleBlur(event) {
-  log(event.target.value);
-}
+// function handleBlur(event) {
+//   log(event.target.value);
+// }
 function handleChange(event) {
   log(`target --${event.target}--
   id --${event.target.dataset.setting}--
@@ -195,8 +195,23 @@ function handleSubmit(event) {
       }
     }
 
+    // Render timer and content first, then animate transition.
+    const setData = {
+      focusSeconds: settings.focus * 60,
+      shortBreakSeconds: settings.shortBreak * 60,
+      longBreakSeconds: settings.longBreak * 60,
+      sessionsRemaining: settings.sessions,
+      cycles: settings.cycles
+    };
+    const updateTime = setInterval(() => { // Subtract 1 from the value of 
+      const currentTime = document.querySelector(".currentTime"),
+        currentActivity = document.querySelector(".currentActivity"),
+        currentCycle = document.querySelector(".currentCycle");
+      
+    }, 1000);
     const keyframes = [
       {
+        // Negative means to the left; 50% because the parent element is twice as large as the body.
         transform: "translate(-50%)",
       }
     ];
@@ -206,6 +221,7 @@ function handleSubmit(event) {
       easing: "ease-in-out"
     }
     scrollElement.animate(keyframes, options);
+
 
   } catch (err) {
     console.error(err);
