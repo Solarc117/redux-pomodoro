@@ -10,6 +10,10 @@ function log() {
 const quotes = [
   // Objs containing quote and author properties.
   {
+    quote: "Most people overestimate what they can do in one year and underestimate what they can do in ten years.",
+    author: " - Bill Gates"
+  },
+  {
     quote:
       "A side effect of memory training... is an improvement in your general ability to concentrate. This ability can then be fruitfully applied to any task demanding deep work.",
     author: ` - Cal Newport, Deep Work`,
@@ -201,29 +205,46 @@ function handleSubmit(event) {
       shortBreakSeconds: settings.shortBreak * 60,
       longBreakSeconds: settings.longBreak * 60,
       sessionsRemaining: settings.sessions,
-      cycles: settings.cycles
     };
-    const updateTime = setInterval(() => { // Subtract 1 from the value of 
-      const currentTime = document.querySelector(".currentTime"),
-        currentActivity = document.querySelector(".currentActivity"),
-        currentCycle = document.querySelector(".currentCycle");
-      
+    function secondsToMinutes(int) {
+      if (!Number.isInteger(int)) {
+        throw new Error("Invalid secondsToMinutes() param: " + int);
+      }
+      const seconds = int % 60,
+        minutes = int >= 60 ? (int - seconds) / 60 : 0;
+      return `${minutes}:${seconds}`;
+    }
+    const currentTimeHTML = document.querySelector(".currentTime");
+    const currentActivityHTML = document.querySelector(".currentActivity");
+    let currentActivity = "Focus";
+    let currentSessionTime = setData.focusSeconds;
+    currentTimeHTML.innerHTML = secondsToMinutes(setData.focusSeconds);
+    currentActivityHTML.innerHTML = currentActivity;
+    const updateTime = setInterval(() => {
+      // currentActivityHTML = document.querySelector(".currentActivity"),
+      // currentCycleHTML = document.querySelector(".currentCycle");
+      // We need two variables for focusSeconds since we need one variable to keep track of how many seconds remain in the current session, and one variable to fall back to once we initiate another session.
+      currentSessionTime--;
+      log(currentSessionTime);
+      // If the current session time is higher than 0, continue counting down.
+      // If the current session time is 0, sessionsRemaining-- and check if it's 0.
+      if (currentSessionTime >= 0)
+        currentTimeHTML.innerHTML = secondsToMinutes(currentSessionTime);
+      else clearInterval(updateTime);
     }, 1000);
     const keyframes = [
       {
         // Negative means to the left; 50% because the parent element is twice as large as the body.
         transform: "translate(-50%)",
-      }
+      },
     ];
     const options = {
       duration: 750,
       fill: "forwards",
-      easing: "ease-in-out"
-    }
+      easing: "ease-in-out",
+    };
     scrollElement.animate(keyframes, options);
-
-
   } catch (err) {
     console.error(err);
   }
-};
+}
