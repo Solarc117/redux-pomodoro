@@ -8,10 +8,10 @@ function log() {
 
 // Render a random quote.
 const quotes = [
-  // Objs containing quote and author properties.
   {
-    quote: "Most people overestimate what they can do in one year and underestimate what they can do in ten years.",
-    author: " - Bill Gates"
+    quote:
+      "Most people overestimate what they can do in one year and underestimate what they can do in ten years.",
+    author: " - Bill Gates",
   },
   {
     quote:
@@ -150,25 +150,28 @@ quoteAuthor.append(randomQuote.author);
 
 // Listen for changes by the user.
 const settingInputs = Array.from(document.getElementsByClassName("setting"));
-settingInputs.forEach(setting => {
-  // setting.addEventListener("blur", handleBlur);
-  setting.addEventListener("change", handleChange);
-});
-// function handleBlur(event) {
-//   log(event.target.value);
+settingInputs.forEach(setting =>
+  setting.addEventListener("change", event =>
+    store.dispatch(
+      changeSetting([
+        event.target.dataset.setting,
+        parseFloat(event.target.value),
+      ])
+    )
+  )
+);
+// function handleChange(event) {
+//   log(`target --${event.target}--
+//   data-setting --${event.target.dataset.setting}--
+//   value --${event.target.value}--
+//   dispatching...`);
+//   store.dispatch(
+//     changeSetting([
+//       event.target.dataset.setting,
+//       parseFloat(event.target.value),
+//     ])
+//   );
 // }
-function handleChange(event) {
-  log(`target --${event.target}--
-  id --${event.target.dataset.setting}--
-  value --${event.target.value}--
-  dispatching...`);
-  store.dispatch(
-    changeSetting([
-      event.target.dataset.setting,
-      parseFloat(event.target.value),
-    ])
-  );
-}
 
 // Render the timer when form submits.
 document.querySelector("#main").onsubmit = handleSubmit;
@@ -176,27 +179,19 @@ function handleSubmit(event) {
   // The "main" form that triggers the timer screen once .pomodoroStart is pressed.
   // State should have been changed by this point, so I would access the values using store.getState().
   // Remember to check that all the values in store are of a valid format (typeof numbers and within the correct range), and if not  prompt the user to reload the page.
+  event.preventDefault();
   const settings = store.getState().settings;
   const scrollElement = document.querySelector(".scroll");
-  event.preventDefault();
   try {
     for (let key in settings) {
       const currentSetting = settings[key];
-      // prettier-ignore
-      const correspondingInputValue = parseFloat(document.querySelector(`[data-setting="${key}"]`).value);
-      function notify() {
-        alert("Something went wrong, please refresh and try again.");
-      }
-
-      if (typeof currentSetting !== "number") {
-        notify();
-        throw new Error(`${currentSetting} is not of type num.`);
-      }
-      if (currentSetting !== correspondingInputValue) {
-        notify();
-        // prettier-ignore
-        throw new Error(`${currentSetting} does not match ${correspondingInputValue}`);
-      }
+      const correspondingInputValue = parseFloat(
+        document.querySelector(`[data-setting="${key}"]`).value
+      );
+      if (typeof currentSetting !== "number")
+        throw `${currentSetting} is not of type num.`;
+      if (currentSetting !== correspondingInputValue)
+        throw `${currentSetting} does not match ${correspondingInputValue}`;
     }
 
     // Render timer and content first, then animate transition.
@@ -207,19 +202,20 @@ function handleSubmit(event) {
       sessionsRemaining: settings.sessions,
     };
     function secondsToMinutes(int) {
-      if (!Number.isInteger(int)) {
-        throw new Error("Invalid secondsToMinutes() param: " + int);
-      }
+      if (!Number.isInteger(int))
+        throw "Invalid secondsToMinutes() param: " + int;
       const seconds = int % 60,
         minutes = int >= 60 ? (int - seconds) / 60 : 0;
       return `${minutes}:${seconds}`;
     }
-    const currentTimeHTML = document.querySelector(".currentTime");
-    const currentActivityHTML = document.querySelector(".currentActivity");
-    let currentActivity = "Focus";
-    let currentSessionTime = setData.focusSeconds;
-    currentTimeHTML.innerHTML = secondsToMinutes(setData.focusSeconds);
-    currentActivityHTML.innerHTML = currentActivity;
+    const currentTimeTag = document.querySelector(".currentTime"),
+      currentActivityTag = document.querySelector(".currentActivity");
+    let currentSessionTime = setData.focusSeconds,
+      currentActivity = "Focus";
+
+    currentTimeTag.innerHTML = secondsToMinutes(setData.focusSeconds);
+    currentActivityTag.innerHTML = currentActivity;
+
     const updateTime = setInterval(() => {
       // currentActivityHTML = document.querySelector(".currentActivity"),
       // currentCycleHTML = document.querySelector(".currentCycle");
@@ -229,9 +225,11 @@ function handleSubmit(event) {
       // If the current session time is higher than 0, continue counting down.
       // If the current session time is 0, sessionsRemaining-- and check if it's 0.
       if (currentSessionTime >= 0)
-        currentTimeHTML.innerHTML = secondsToMinutes(currentSessionTime);
+        currentTimeTag.innerHTML = secondsToMinutes(currentSessionTime);
       else clearInterval(updateTime);
     }, 1000);
+
+    // We animate the element after the first set of operations before
     const keyframes = [
       {
         // Negative means to the left; 50% because the parent element is twice as large as the body.
