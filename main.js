@@ -199,37 +199,29 @@ function handleSubmit(event) {
       focusSeconds: settings.focus * 60,
       shortBreakSeconds: settings.shortBreak * 60,
       longBreakSeconds: settings.longBreak * 60,
-      sessionsRemaining: settings.sessions,
+      sessionsPerCycle: settings.sessions,
     };
     function secondsToMinutes(int) {
       if (!Number.isInteger(int))
+        // Might need to change this from throw to reject.
         throw "Invalid secondsToMinutes() param: " + int;
       const seconds = int % 60,
         minutes = int >= 60 ? (int - seconds) / 60 : 0;
       return `${minutes}:${seconds}`;
     }
-    const currentTimeTag = document.querySelector(".currentTime"),
-      currentActivityTag = document.querySelector(".currentActivity");
+    function updateCurrentActivity(activity) {
+      document.querySelector(".currentActivity").innerHTML = activity;
+    }
+    const currentTimeTag = document.querySelector(".currentTime");
     let currentSessionTime = setData.focusSeconds,
-      currentActivity = "Focus";
-
+      // currentActivity = "Focus",
+      sessionsRemaining = setData.sessionsPerCycle,
+      focusSessionFinished = false;
+    updateCurrentActivity("Focus");
+    // We set the initial HTML, then animate, and THEN set the interval that updates the timer every second.
     currentTimeTag.innerHTML = secondsToMinutes(setData.focusSeconds);
     currentActivityTag.innerHTML = currentActivity;
 
-    const updateTime = setInterval(() => {
-      // currentActivityHTML = document.querySelector(".currentActivity"),
-      // currentCycleHTML = document.querySelector(".currentCycle");
-      // We need two variables for focusSeconds since we need one variable to keep track of how many seconds remain in the current session, and one variable to fall back to once we initiate another session.
-      currentSessionTime--;
-      log(currentSessionTime);
-      // If the current session time is higher than 0, continue counting down.
-      // If the current session time is 0, sessionsRemaining-- and check if it's 0.
-      if (currentSessionTime >= 0)
-        currentTimeTag.innerHTML = secondsToMinutes(currentSessionTime);
-      else clearInterval(updateTime);
-    }, 1000);
-
-    // We animate the element after the first set of operations before
     const keyframes = [
       {
         // Negative means to the left; 50% because the parent element is twice as large as the body.
@@ -242,6 +234,34 @@ function handleSubmit(event) {
       easing: "ease-in-out",
     };
     scrollElement.animate(keyframes, options);
+
+    // Need to make this interval a promise because I need to run code only once the interval is over.
+    new Promise((resolve, reject) => {
+      const updateTime = setInterval(() => {
+        // currentActivityHTML = document.querySelector(".currentActivity"),
+        // currentCycleHTML = document.querySelector(".currentCycle");
+        // We need two variables for focusSeconds since we need one variable to keep track of how many seconds remain in the current session, and one variable to fall back to once we initiate another session.
+        currentSessionTime--;
+        log(currentSessionTime);
+        // If the current session time is higher than 0, continue counting down.
+        // If the current session time is 0, sessionsRemaining-- and check if it's 0.
+        if (currentSessionTime >= 0)
+          currentTimeTag.innerHTML = secondsToMinutes(currentSessionTime);
+        else {
+          clearInterval(updateTime);
+          resolve();
+        }
+        // {
+        //   sessionsRemaining--;
+        //   if (sessionsRemaining >= 0) { // If there current cycle is still not done, go into a short break before starting another focus session.
+  
+        //   }
+        // }
+      }, 1000);
+    }).then()
+
+
+
   } catch (err) {
     console.error(err);
   }
