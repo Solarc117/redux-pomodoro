@@ -7,112 +7,343 @@ function error() {
   console.error("❌", ...arguments);
 }
 
-// Write a promise chain that utilizes the two provided time values and creates an interval that logs the first value all the way down to zero, then creates another timer for the second value and logs that all the way down to zero once the first timer has expired.
-
 function secondsToMinutes(int) {
   if (!Number.isInteger(int))
-    // Does this reject the promise?
+    // Make sure this rejects the promise.
     throw `Invalid secondsToMinutes() param: ${int}`;
   const seconds = int % 60,
     minutes = int >= 60 ? (int - seconds) / 60 : 0;
   log(`${minutes}:${seconds}`);
 }
 
-const times = {
-  time1: 5.2,
-  time2: 2,
-};
-
-(async function () {
+async function pomodoro({
+  focus,
+  shortBreak,
+  longBreak = 0,
+  sessions,
+  cycles,
+}) {
+  // Want to avoid mutating these arguments, since they might be needed them more than once.
   try {
-    log("Timer started.");
-    let timer1Result = await new Promise((resolve, reject) => {
-      let timeRemaining = times.time1;
+    let cyclesRemaining = cycles;
+    let sessionsRemaining = sessions;
+    log("Focus session starting...");
+    const focusTimer = await new Promise((resolve, reject) => {
+      let timeRemaining = focus;
       const count = setInterval(() => {
         try {
           secondsToMinutes(timeRemaining);
+          timeRemaining--;
+          if (timeRemaining < 0) {
+            // Not (timeRemaining = 0), because the UI should display 0:0.
+            resolve("Focus session finished.");
+            clearInterval(count);
+          }
         } catch (err) {
           reject(err);
-        }
-        timeRemaining--;
-        if (timeRemaining < 0) {
           clearInterval(count);
-          resolve("Timer1 finished");
         }
       }, 1000);
-    }).catch(err => error(err));
-    log("timer1Result:", timer1Result);
-    let timer2Result = await new Promise(resolve => {
-      let timeRemaining = times.time1;
-      const count = setInterval(() => {
-        try {
-          secondsToMinutes(timeRemaining);
-        } catch (err) {
-          error(err);
-        }
-        timeRemaining--;
-        if (timeRemaining < 0) {
-          clearInterval(count);
-          resolve("Timer2 finished!");
-        }
-      }, 1000);
-    }).catch(err => error(err));
-    log(timer2Result);
+    });
+    log(focusTimer);
+    sessionsRemaining--;
+    while (sessionsRemaining > 0) {
+      log("Short break starting...");
+      const shortBreakTimer = await new Promise((resolve, reject) => {
+        let timeRemaining = shortBreak;
+        const count = setInterval(() => {
+          try {
+            secondsToMinutes(timeRemaining);
+            timeRemaining--;
+            if (timeRemaining < 0) {
+              resolve("Short break finished.");
+              clearInterval(count);
+            }
+          } catch (err) {
+            reject(err);
+            clearInterval(count);
+          }
+        }, 1000);
+      });
+      log(shortBreakTimer, "Focus session starting...");
+      const focusTimer = await new Promise((resolve, reject) => {
+        let timeRemaining = focus;
+        const count = setInterval(() => {
+          try {
+            secondsToMinutes(timeRemaining);
+            timeRemaining--;
+            if (timeRemaining < 0) {
+              resolve("Focus session finished.");
+              clearInterval(count);
+            }
+          } catch (err) {
+            reject(err);
+            clearInterval(count);
+          }
+        }, 1000);
+      });
+      log(focusTimer);
+      sessionsRemaining--;
+    }
+    cyclesRemaining--;
+    log(`Cycle complete!`);
+    while (cyclesRemaining > 0) {
+      log(`Cycles remaining: ${cyclesRemaining}`);
+      log("Long break starting...");
+      const longBreakTimer = await new Promise((resolve, reject) => {
+        let timeRemaining = longBreak;
+        const count = setInterval(() => {
+          try {
+            secondsToMinutes(timeRemaining);
+            timeRemaining--;
+            if (timeRemaining < 0) {
+              resolve("Long break finished.");
+              clearInterval(count);
+            }
+          } catch (err) {
+            reject(err);
+            clearInterval(count);
+          }
+        }, 1000);
+      });
+      // We reset the number of sessions after each cycle.
+      sessionsRemaining = sessions;
+      log("Focus session starting...");
+      const focusTimer = await new Promise((resolve, reject) => {
+        let timeRemaining = focus;
+        const count = setInterval(() => {
+          try {
+            secondsToMinutes(timeRemaining);
+            timeRemaining--;
+            if (timeRemaining < 0) {
+              // Not (timeRemaining = 0) because the UI should display 0:0.
+              resolve("Focus session finished.");
+              clearInterval(count);
+            }
+          } catch (err) {
+            reject(err);
+            clearInterval(count);
+          }
+        }, 1000);
+      });
+      log(focusTimer);
+      sessionsRemaining--;
+      while (sessionsRemaining > 0) {
+        log("Short break starting...");
+        const shortBreakTimer = await new Promise((resolve, reject) => {
+          let timeRemaining = shortBreak;
+          const count = setInterval(() => {
+            try {
+              secondsToMinutes(timeRemaining);
+              timeRemaining--;
+              if (timeRemaining < 0) {
+                resolve("Short break finished.");
+                clearInterval(count);
+              }
+            } catch (err) {
+              reject(err);
+              clearInterval(count);
+            }
+          }, 1000);
+        });
+        log(shortBreakTimer, "Focus session starting...");
+        const focusTimer = await new Promise((resolve, reject) => {
+          let timeRemaining = focus;
+          const count = setInterval(() => {
+            try {
+              secondsToMinutes(timeRemaining);
+              timeRemaining--;
+              if (timeRemaining < 0) {
+                resolve("Focus session finished.");
+                clearInterval(count);
+              }
+            } catch (err) {
+              reject(err);
+              clearInterval(count);
+            }
+          }, 1000);
+        });
+        log(focusTimer);
+        sessionsRemaining--;
+      }
+      cyclesRemaining--;
+    }
+    log("All cycles complete!");
   } catch (err) {
     error(err);
   }
-})();
+}
 
-// (async function () {
-//   try {
-//     let time = 2;
-//     let result = await new Promise(resolve => {
-//       const count = setInterval(() => {
-//         log(time);
-//         time--;
-//         if (time < 0) {
-//           resolve("Timer end.");
-//           clearInterval(count);
-//         };
-//       }, 1000);
-//     })
-//     log(result);
-//   } catch (err) {
-//     error(err);
-//   }
-// })();
-// Value should be undefined.
-// new Promise(resolve => {
-//   console.log("Timer started.");
-//   let timeRemaining = times.time1;
-//   // By this point, we presume all the times are valid, and even if they're not, secondsToMinutes should throw an error that would reject the promise.
-//   // Create a timer that counts down and logs the first value down to 0, and then resolves.
-//   const timeLogger = setInterval(() => {
-//     secondsToMinutes(timeRemaining);
-//     timeRemaining--;
-//     if (timeRemaining < 0) {
-//       clearInterval(timeLogger);
-//       resolve("Timer1 finished!");
-//     }
-//   }, 1000);
-// })
-//   .then(message1 => {
-//     console.log("message1:", message1);
-//     let timeRemaining = times.time2;
-//     return new Promise(resolve => {
-//       const timeLogger = setInterval(() => {
-//         secondsToMinutes(timeRemaining);
-//         timeRemaining--;
-//         if (timeRemaining < 0) {
-//           clearInterval(timeLogger);
-//           resolve("Time2 finished!");
-//         }
-//       }, 1000);
-//     })
-//   })
-//   .then(message2 => {
-//     console.log("message2:", message2);;
-//   })
-//   .catch(err => {
-//     error(err);
-//   });
+// Now, I really do need to clean this code up before integrating it into my application.
+// Most of the redundancy right now comes from doing a single cycle and a single focus session before entering the while loops.
+
+// Let me instead subtract from sessionsRemaining and cyclesRemaining at the start of the loops rather than at the end, or even immediately after them but before breaks.
+
+async function pomodoro2({
+  focus,
+  shortBreak,
+  longBreak = 0, // Requires a default value because if cycles is 1, there are no long breaks.
+  sessions,
+  cycles,
+}) {
+  // Want to avoid mutating these arguments, since they might be needed them more than once.
+  try {
+    let cyclesRemaining = cycles;
+    let sessionsRemaining = sessions;
+    log("Focus session starting...");
+    const focusTimer = await new Promise((resolve, reject) => {
+      let timeRemaining = focus;
+      const count = setInterval(() => {
+        try {
+          secondsToMinutes(timeRemaining);
+          timeRemaining--;
+          if (timeRemaining < 0) {
+            // Not (timeRemaining = 0), because the UI should display 0:0.
+            resolve("Focus session finished.");
+            clearInterval(count);
+          }
+        } catch (err) {
+          reject(err);
+          clearInterval(count);
+        }
+      }, 1000);
+    });
+    log(focusTimer);
+    sessionsRemaining--;
+    while (sessionsRemaining > 0) {
+      log("Short break starting...");
+      const shortBreakTimer = await new Promise((resolve, reject) => {
+        let timeRemaining = shortBreak;
+        const count = setInterval(() => {
+          try {
+            secondsToMinutes(timeRemaining);
+            timeRemaining--;
+            if (timeRemaining < 0) {
+              resolve("Short break finished.");
+              clearInterval(count);
+            }
+          } catch (err) {
+            reject(err);
+            clearInterval(count);
+          }
+        }, 1000);
+      });
+      log(shortBreakTimer, "Focus session starting...");
+      const focusTimer = await new Promise((resolve, reject) => {
+        let timeRemaining = focus;
+        const count = setInterval(() => {
+          try {
+            secondsToMinutes(timeRemaining);
+            timeRemaining--;
+            if (timeRemaining < 0) {
+              resolve("Focus session finished.");
+              clearInterval(count);
+            }
+          } catch (err) {
+            reject(err);
+            clearInterval(count);
+          }
+        }, 1000);
+      });
+      log(focusTimer);
+      sessionsRemaining--;
+    }
+    cyclesRemaining--;
+    log(`Cycle complete!`);
+    while (cyclesRemaining > 0) {
+      log(`Cycles remaining: ${cyclesRemaining}`);
+      log("Long break starting...");
+      const longBreakTimer = await new Promise((resolve, reject) => {
+        let timeRemaining = longBreak;
+        const count = setInterval(() => {
+          try {
+            secondsToMinutes(timeRemaining);
+            timeRemaining--;
+            if (timeRemaining < 0) {
+              resolve("Long break finished.");
+              clearInterval(count);
+            }
+          } catch (err) {
+            reject(err);
+            clearInterval(count);
+          }
+        }, 1000);
+      });
+      // We reset the number of sessions after each cycle.
+      sessionsRemaining = sessions;
+      log("Focus session starting...");
+      const focusTimer = await new Promise((resolve, reject) => {
+        let timeRemaining = focus;
+        const count = setInterval(() => {
+          try {
+            secondsToMinutes(timeRemaining);
+            timeRemaining--;
+            if (timeRemaining < 0) {
+              // Not (timeRemaining = 0) because the UI should display 0:0.
+              resolve("Focus session finished.");
+              clearInterval(count);
+            }
+          } catch (err) {
+            reject(err);
+            clearInterval(count);
+          }
+        }, 1000);
+      });
+      log(focusTimer);
+      sessionsRemaining--;
+      while (sessionsRemaining > 0) {
+        log("Short break starting...");
+        const shortBreakTimer = await new Promise((resolve, reject) => {
+          let timeRemaining = shortBreak;
+          const count = setInterval(() => {
+            try {
+              secondsToMinutes(timeRemaining);
+              timeRemaining--;
+              if (timeRemaining < 0) {
+                resolve("Short break finished.");
+                clearInterval(count);
+              }
+            } catch (err) {
+              reject(err);
+              clearInterval(count);
+            }
+          }, 1000);
+        });
+        log(shortBreakTimer, "Focus session starting...");
+        const focusTimer = await new Promise((resolve, reject) => {
+          let timeRemaining = focus;
+          const count = setInterval(() => {
+            try {
+              secondsToMinutes(timeRemaining);
+              timeRemaining--;
+              if (timeRemaining < 0) {
+                resolve("Focus session finished.");
+                clearInterval(count);
+              }
+            } catch (err) {
+              reject(err);
+              clearInterval(count);
+            }
+          }, 1000);
+        });
+        log(focusTimer);
+        sessionsRemaining--;
+      }
+      cyclesRemaining--;
+    }
+    log("All cycles complete!");
+  } catch (err) {
+    error(err);
+  }
+}
+
+const data = {
+  focus: 2,
+  shortBreak: 1,
+  longBreak: 2,
+  sessions: 1,
+  cycles: 2,
+};
+
+pomodoro2(data);
+

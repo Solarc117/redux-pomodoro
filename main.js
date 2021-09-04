@@ -16,7 +16,7 @@ const quotes = [
   {
     quote:
       "A side effect of memory training... is an improvement in your general ability to concentrate. This ability can then be fruitfully applied to any task demanding deep work.",
-    author: ` - Cal Newport, Deep Work`,
+    author: " - Cal Newport, Deep Work",
   },
   {
     quote:
@@ -160,22 +160,9 @@ settingInputs.forEach(setting =>
     )
   )
 );
-// function handleChange(event) {
-//   log(`target --${event.target}--
-//   data-setting --${event.target.dataset.setting}--
-//   value --${event.target.value}--
-//   dispatching...`);
-//   store.dispatch(
-//     changeSetting([
-//       event.target.dataset.setting,
-//       parseFloat(event.target.value),
-//     ])
-//   );
-// }
 
 // Render the timer when form submits.
-document.querySelector("#main").onsubmit = handleSubmit;
-function handleSubmit(event) {
+document.querySelector("#main").onsubmit = event => {
   // The "main" form that triggers the timer screen once .pomodoroStart is pressed.
   // State should have been changed by this point, so I would access the values using store.getState().
   // Remember to check that all the values in store are of a valid format (typeof numbers and within the correct range), and if not  prompt the user to reload the page.
@@ -254,14 +241,11 @@ function handleSubmit(event) {
         // {
         //   sessionsRemaining--;
         //   if (sessionsRemaining >= 0) { // If there current cycle is still not done, go into a short break before starting another focus session.
-  
+
         //   }
         // }
       }, 1000);
-    }).then()
-
-
-
+    }).then();
   } catch (err) {
     console.error(err);
   }
