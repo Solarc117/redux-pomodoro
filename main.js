@@ -3,9 +3,11 @@ import { changeSetting, store } from "./redux/settingsSlice";
 ("use strict");
 console.clear();
 function log() {
-  console.log(...arguments);
+  console.log("📄", ...arguments);
 }
-
+function error() {
+  console.error("❌", ...arguments);
+}
 // Render a random quote.
 const quotes = [
   {
@@ -162,13 +164,13 @@ settingInputs.forEach(setting =>
 );
 
 // Render the timer when form submits.
-document.querySelector("#main").onsubmit = event => {
+document.querySelector("#main").onsubmit = async function (event) {
   // The "main" form that triggers the timer screen once .pomodoroStart is pressed.
   // State should have been changed by this point, so I would access the values using store.getState().
   // Remember to check that all the values in store are of a valid format (typeof numbers and within the correct range), and if not  prompt the user to reload the page.
   event.preventDefault();
   const settings = store.getState().settings;
-  const scrollElement = document.querySelector(".scroll");
+  // Checking that store settings match HTML values.
   try {
     for (let key in settings) {
       const currentSetting = settings[key];
@@ -182,33 +184,21 @@ document.querySelector("#main").onsubmit = event => {
     }
 
     // Render timer and content first, then animate transition.
-    const setData = {
-      focusSeconds: settings.focus * 60,
-      shortBreakSeconds: settings.shortBreak * 60,
-      longBreakSeconds: settings.longBreak * 60,
-      sessionsPerCycle: settings.sessions,
-    };
     function secondsToMinutes(int) {
       if (!Number.isInteger(int))
-        // Might need to change this from throw to reject.
         throw "Invalid secondsToMinutes() param: " + int;
       const seconds = int % 60,
         minutes = int >= 60 ? (int - seconds) / 60 : 0;
       return `${minutes}:${seconds}`;
     }
-    function updateCurrentActivity(activity) {
+    function updateActivity(activity) {
       document.querySelector(".currentActivity").innerHTML = activity;
     }
-    const currentTimeTag = document.querySelector(".currentTime");
-    let currentSessionTime = setData.focusSeconds,
-      // currentActivity = "Focus",
-      sessionsRemaining = setData.sessionsPerCycle,
-      focusSessionFinished = false;
-    updateCurrentActivity("Focus");
-    // We set the initial HTML, then animate, and THEN set the interval that updates the timer every second.
-    currentTimeTag.innerHTML = secondsToMinutes(setData.focusSeconds);
-    currentActivityTag.innerHTML = currentActivity;
+    function updateTime(time) {
+      document.querySelector(".currentTime").innerHTML = time;
+    }
 
+    const scrollElement = document.querySelector(".scroll");
     const keyframes = [
       {
         // Negative means to the left; 50% because the parent element is twice as large as the body.
@@ -221,32 +211,8 @@ document.querySelector("#main").onsubmit = event => {
       easing: "ease-in-out",
     };
     scrollElement.animate(keyframes, options);
-
-    // Need to make this interval a promise because I need to run code only once the interval is over.
-    new Promise((resolve, reject) => {
-      const updateTime = setInterval(() => {
-        // currentActivityHTML = document.querySelector(".currentActivity"),
-        // currentCycleHTML = document.querySelector(".currentCycle");
-        // We need two variables for focusSeconds since we need one variable to keep track of how many seconds remain in the current session, and one variable to fall back to once we initiate another session.
-        currentSessionTime--;
-        log(currentSessionTime);
-        // If the current session time is higher than 0, continue counting down.
-        // If the current session time is 0, sessionsRemaining-- and check if it's 0.
-        if (currentSessionTime >= 0)
-          currentTimeTag.innerHTML = secondsToMinutes(currentSessionTime);
-        else {
-          clearInterval(updateTime);
-          resolve();
-        }
-        // {
-        //   sessionsRemaining--;
-        //   if (sessionsRemaining >= 0) { // If there current cycle is still not done, go into a short break before starting another focus session.
-
-        //   }
-        // }
-      }, 1000);
-    }).then();
   } catch (err) {
-    console.error(err);
+    error(err);
+    alert("Something went wrong. Please refresh and try again.");
   }
-}
+};
