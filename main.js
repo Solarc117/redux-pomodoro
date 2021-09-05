@@ -169,16 +169,23 @@ document.querySelector("#main").onsubmit = async function (event) {
   // State should have been changed by this point, so I would access the values using store.getState().
   // Remember to check that all the values in store are of a valid format (typeof numbers and within the correct range), and if not  prompt the user to reload the page.
   event.preventDefault();
-  const settings = store.getState().settings;
+  let {
+    focus: focusSeconds,
+    shortBreak: shortBreakSeconds,
+    longBreak: longBreakSeconds,
+    sessions,
+    cycles,
+  } = store.getState().settings;
+  focusSeconds *= 60;
+  shortBreakSeconds *= 60;
+  longBreakSeconds *= 60;
   // Checking that store settings match HTML values.
   try {
-    for (let key in settings) {
-      const currentSetting = settings[key];
+    for (let key in store.getState().settings) {
+      const currentSetting = store.getState().settings[key];
       const correspondingInputValue = parseFloat(
         document.querySelector(`[data-setting="${key}"]`).value
       );
-      if (typeof currentSetting !== "number")
-        throw `${currentSetting} is not of type num.`;
       if (currentSetting !== correspondingInputValue)
         throw `${currentSetting} does not match ${correspondingInputValue}`;
     }
@@ -191,11 +198,45 @@ document.querySelector("#main").onsubmit = async function (event) {
         minutes = int >= 60 ? (int - seconds) / 60 : 0;
       return `${minutes}:${seconds}`;
     }
+    function updateTime(time) {
+      document.querySelector(".currentTime").innerHTML = time;
+    }
     function updateActivity(activity) {
       document.querySelector(".currentActivity").innerHTML = activity;
     }
-    function updateTime(time) {
-      document.querySelector(".currentTime").innerHTML = time;
+    function updateCycle(current, total) {
+      document.querySelector(
+        ".currentCycle"
+      ).innerHTML = `Cycle ${current} of ${total}`;
+    }
+    async function timer(sessionType, seconds) {
+      // Remember, this returns a promise, either resolved or rejected.
+      // A function that creates a custom timer for the number of secionds passed, returns the
+      try {
+        updateActivity(sessionType);
+        const countdown = await new Promise((resolve, reject) => {
+          // I can mutate the seconds variable passed, because this function will be reused and mutating the argument passed does not mutate the original variable.
+          const count = setInterval(() => {
+            try {
+              updateTime(secondsToMinutes(seconds));
+              seconds--;
+              if (seconds < 0) {
+                resolve(`${sessionType} finished.`);
+                clearInterval(count);
+              }
+            } catch (err) {
+              reject(err);
+              clearInterval(count);
+            }
+          }, 1000);
+        });
+        log(countdown);
+      } catch (err) {
+        // Can I throw an error here? Will the outside catch{} block handle it?
+        throw err;
+        // error(err);
+        // alert("Something went wrong. Please refresh and try again.");
+      }
     }
 
     const scrollElement = document.querySelector(".scroll");
@@ -211,6 +252,24 @@ document.querySelector("#main").onsubmit = async function (event) {
       easing: "ease-in-out",
     };
     scrollElement.animate(keyframes, options);
+
+    let cyclesRemaining = cycles;
+    updateCycle(cyclesRemaining, cycles);
+    while (cyclesRemaining > 0) {
+      let sessionsRemaining = sessions;
+      while (sessionsRemaining > 0) {
+        await timer("Focus session", focusSeconds);
+        sessionsRemaining--;
+        if (sessionsRemaining > 0)
+          await timer("Short break", shortBreakSeconds);
+      }
+      cyclesRemaining--;
+      if (cyclesRemaining > 0) {
+        updateCycle(cyclesRemaining, cycles);
+        await timer("Long break", longBreakSeconds);
+      }
+    }
+    updateActivity("All cycles complete, returning to the home page...");
   } catch (err) {
     error(err);
     alert("Something went wrong. Please refresh and try again.");

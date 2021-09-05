@@ -118,9 +118,15 @@ async function watiForPomodoro() {
 
 // I can create a function that receives a seconds argument and a variable, and creates a timer for the number of seconds passed, decrementing the second variable passed once the timer is over. Then I can call it for every different time I use.
 
-async function pomodoro({ focus, shortBreak, longBreak, sessions, cycles }) {
+async function pomodoro({
+  focusSeconds,
+  shortBreakSeconds,
+  longBreakSeconds,
+  sessions,
+  cycles,
+}) {
   // Pomodoro will ALSO return a promise.
-  async function timer(seconds, variableToDecrement, sessionType = "Session") {
+  async function timer(sessionType, seconds) {
     // Remember, this returns a promise, either resolved or rejected.
     // A function that creates a custom timer for the number of secionds passed, returns the
     try {
@@ -132,7 +138,7 @@ async function pomodoro({ focus, shortBreak, longBreak, sessions, cycles }) {
             secondsToMinutes(seconds);
             seconds--;
             if (seconds < 0) {
-              resolve(`${sessionType} finishing...`);
+              resolve(`${sessionType} finished.`);
               clearInterval(count);
             }
           } catch (err) {
@@ -142,36 +148,39 @@ async function pomodoro({ focus, shortBreak, longBreak, sessions, cycles }) {
         }, 1000);
       });
       log(countdown);
-      // Only two variables that I would be considering decrementing; sessionsRemaining, or cyclesRemaining.
-      variableToDecrement === sessionsRemaining
-        ? sessionsRemaining--
-        : variableToDecrement === cyclesRemaining
-        ? cyclesRemaining--
-        : log("Break detected.");
     } catch (err) {
       error(err);
     }
   }
   try {
-    let sessionsRemaining = sessions;
-    while (sessionsRemaining > 0) {
-      await timer(focus, sessionsRemaining, "Focus session");
-      sessionsRemaining--;
-      if (sessionsRemaining > 0) await timer(shortBreak, null, "Short break");
+    while (cycles > 0) {
+      let sessionsRemaining = sessions;
+      while (sessionsRemaining > 0) {
+        await timer("Focus session", focusSeconds);
+        sessionsRemaining--;
+        if (sessionsRemaining > 0)
+          await timer("Short break", shortBreakSeconds);
+      }
+      log("Cycle complete.");
+      cycles--;
+      if (cycles > 0) await timer("Long break", longBreakSeconds);
     }
-    log("Cycle complete.");
-    // if (cycles > 0) await timer(longBreak, null, "Long break");
+    log("All cycles complete!!");
   } catch (err) {
     error(err);
   }
 }
 
 const data = {
-  focus: 1,
-  shortBreak: 1,
-  longBreak: 1,
+  focusSeconds: 1,
+  shortBreakSeconds: 1,
+  longBreakSeconds: 1,
   sessions: 2,
   cycles: 2,
 };
 
-pomodoro(data); // Should run a timer for only one cycle.
+// Alright, this works. Now, I will implement this, and then add a transition one I've got it working.
+
+let num = 2;
+num *= 3;
+log(num);
