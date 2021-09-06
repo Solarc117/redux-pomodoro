@@ -192,8 +192,8 @@ document.querySelector("#main").onsubmit = async function (event) {
 
     // Render timer and content first, then animate transition.
     function secondsToMinutes(int) {
-      // if (!Number.isInteger(int))
-      //   throw "Invalid secondsToMinutes() param: " + int;
+      if (!Number.isInteger(int))
+        throw "Invalid secondsToMinutes() param: " + int;
       const seconds = int % 60,
         minutes = int >= 60 ? (int - seconds) / 60 : 0;
       return `${minutes}:${seconds}`;
