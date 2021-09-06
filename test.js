@@ -179,8 +179,4 @@ const data = {
   cycles: 2,
 };
 
-// Alright, this works. Now, I will implement this, and then add a transition one I've got it working.
-
-let num = 2;
-num *= 3;
-log(num);
+// Alright, this works. Now, I will implement this, and then add a transition once I've got it working.
