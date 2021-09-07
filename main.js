@@ -8,6 +8,24 @@ function log() {
 function error() {
   console.error("❌", ...arguments);
 }
+function message(str) {
+  const message = document.getElementById("message");
+  message.innerHTML = str;
+  message.animate(
+    [
+      {
+        opacity: 0,
+      },
+    ],
+    {
+      duration: 2000,
+      fill: "forwards",
+    }
+  );
+  setTimeout(() => {
+    message.innerHTML = "";
+  }, 2000);
+}
 // Render a random quote.
 const quotes = [
   {
@@ -144,11 +162,14 @@ const quotes = [
     author: " - Darren Hardy, The Compound Effect",
   },
 ];
+const greetings = ["Hi there", "Hello", "How are you?", "Hey", "Howdy", "Welcome", "*nod*", "╰(*°▽°*)╯", "(^///^)", "Good to see ya 🙂"];
 const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
 const quoteText = document.querySelector(".quoteText");
 const quoteAuthor = document.querySelector(".quoteAuthor");
 quoteText.append(randomQuote.quote);
 quoteAuthor.append(randomQuote.author);
+
+message(greetings[Math.floor(Math.random() * greetings.length)]);
 
 // Listen for changes by the user.
 const settingInputs = Array.from(document.getElementsByClassName("setting"));
@@ -165,10 +186,8 @@ settingInputs.forEach(setting =>
 
 // Render the timer when form submits.
 document.querySelector("#main").onsubmit = async function (event) {
-  // The "main" form that triggers the timer screen once .pomodoroStart is pressed.
-  // State should have been changed by this point, so I would access the values using store.getState().
-  // Remember to check that all the values in store are of a valid format (typeof numbers and within the correct range), and if not  prompt the user to reload the page.
   event.preventDefault();
+  message("Starting... ✌⏳");
   let {
     focus: focusSeconds,
     shortBreak: shortBreakSeconds,
@@ -187,7 +206,7 @@ document.querySelector("#main").onsubmit = async function (event) {
         document.querySelector(`[data-setting="${key}"]`).value
       );
       if (currentSetting !== correspondingInputValue)
-        throw `${currentSetting} does not match ${correspondingInputValue}`;
+        throw `currentSetting ${currentSetting} does not match corresponidingValue ${correspondingInputValue}`;
     }
 
     // Render timer and content first, then animate transition.
@@ -209,7 +228,7 @@ document.querySelector("#main").onsubmit = async function (event) {
         total - (current - 1)
       } of ${total}`;
     }
-    async function timer(sessionType, seconds) {
+    async function timer(sessionType, seconds, message = "") {
       // Remember, this returns a promise, either resolved or rejected.
       // A function that creates a custom timer for the number of secionds passed, returns the
       try {
@@ -221,6 +240,8 @@ document.querySelector("#main").onsubmit = async function (event) {
               updateTime(secondsToMinutes(seconds));
               seconds--;
               if (seconds < 0) {
+                new Audio("audio/notification.mp3").play();
+                message(message);
                 resolve(`${sessionType} finished.`);
                 clearInterval(count);
               }
@@ -240,18 +261,20 @@ document.querySelector("#main").onsubmit = async function (event) {
     }
 
     const scrollElement = document.querySelector(".scroll");
-    const keyframes = [
-      {
-        // Negative means to the left; 50% because the parent element is twice as large as the body.
-        transform: "translate(-50%)",
-      },
-    ];
     const options = {
       duration: 750,
       fill: "forwards",
       easing: "ease-in-out",
     };
-    scrollElement.animate(keyframes, options);
+    scrollElement.animate(
+      [
+        {
+          // Negative means to the left; 50% because the parent element is twice as large as the body.
+          transform: "translate(-50%)",
+        },
+      ],
+      options
+    );
 
     let cyclesRemaining = cycles;
     updateCycle(cyclesRemaining, cycles);
@@ -269,7 +292,18 @@ document.querySelector("#main").onsubmit = async function (event) {
         await timer("Long break", longBreakSeconds);
       }
     }
-    updateActivity("All cycles complete, returning to the home page...");
+    message("All cycles complete ✨✨👏");
+    scrollElement.animate(
+      [
+        {
+          transform: "translate(-50%)",
+        },
+        {
+          transform: "translate(0)",
+        },
+      ],
+      options
+    );
   } catch (err) {
     error(err);
     alert("Something went wrong. Please refresh and try again.");

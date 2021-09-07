@@ -17,7 +17,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
   color: white;
   background-color: var(--main-color);
   font-family: "Rubik", sans-serif;
@@ -47,6 +47,10 @@ body {
   height: 40px;
   /* Divided the side margin by 2, and subtracted half of the svg's width to center it. */
   margin: 5px calc(100% / 2 - 20px);  
+}
+#message {
+  padding-left: 20px;
+  min-height: 80px;
 }
 /* </header> */
 /* <timer> */
