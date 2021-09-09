@@ -8,7 +8,7 @@ function log() {
 function error() {
   console.error("❌", ...arguments);
 }
-function message(str) {
+function messaging(str) {
   const message = document.getElementById("message");
   message.innerHTML = str;
   message.animate(
@@ -19,7 +19,6 @@ function message(str) {
     ],
     {
       duration: 2000,
-      fill: "forwards",
     }
   );
   setTimeout(() => {
@@ -162,14 +161,30 @@ const quotes = [
     author: " - Darren Hardy, The Compound Effect",
   },
 ];
-const greetings = ["Hi there", "Hello", "How are you?", "Hey", "Howdy", "Welcome", "*nod*", "╰(*°▽°*)╯", "(^///^)", "Good to see ya 🙂"];
+const greetings = [
+  "Hi there",
+  "Hello",
+  "How are you?",
+  "Hey",
+  "Howdy",
+  "Welcome",
+  "*nod*",
+  "╰(*°▽°*)╯",
+  "(^///^)",
+  "Good to see ya 🙂",
+  "(❁´◡`❁)",
+  "^_^",
+  "(⌐■_■)",
+  "ヾ(≧▽≦*)o",
+  "o(*°▽°*)o",
+];
 const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
 const quoteText = document.querySelector(".quoteText");
 const quoteAuthor = document.querySelector(".quoteAuthor");
 quoteText.append(randomQuote.quote);
 quoteAuthor.append(randomQuote.author);
 
-message(greetings[Math.floor(Math.random() * greetings.length)]);
+messaging(greetings[Math.floor(Math.random() * greetings.length)]);
 
 // Listen for changes by the user.
 const settingInputs = Array.from(document.getElementsByClassName("setting"));
@@ -187,7 +202,7 @@ settingInputs.forEach(setting =>
 // Render the timer when form submits.
 document.querySelector("#main").onsubmit = async function (event) {
   event.preventDefault();
-  message("Starting... ✌⏳");
+  messaging("Starting... ✌⏳");
   let {
     focus: focusSeconds,
     shortBreak: shortBreakSeconds,
@@ -241,7 +256,7 @@ document.querySelector("#main").onsubmit = async function (event) {
               seconds--;
               if (seconds < 0) {
                 new Audio("audio/notification.mp3").play();
-                message(message);
+                messaging(message);
                 resolve(`${sessionType} finished.`);
                 clearInterval(count);
               }
@@ -249,7 +264,7 @@ document.querySelector("#main").onsubmit = async function (event) {
               reject(err);
               clearInterval(count);
             }
-          }, 1000);
+          }, 50);
         });
         log(countdown);
       } catch (err) {
@@ -281,18 +296,18 @@ document.querySelector("#main").onsubmit = async function (event) {
     while (cyclesRemaining > 0) {
       let sessionsRemaining = sessions;
       while (sessionsRemaining > 0) {
-        await timer("Focus session", focusSeconds);
+        await timer("Focus session", focusSeconds, "Focus session finished 👌");
         sessionsRemaining--;
         if (sessionsRemaining > 0)
-          await timer("Short break", shortBreakSeconds);
+          await timer("Short break", shortBreakSeconds, "Back to work 🤓");
       }
       cyclesRemaining--;
       if (cyclesRemaining > 0) {
         updateCycle(cyclesRemaining, cycles);
-        await timer("Long break", longBreakSeconds);
+        await timer("Long break", longBreakSeconds, "Long break wrapped up  ");
       }
     }
-    message("All cycles complete ✨✨👏");
+    messaging("All cycles complete ✨✨👏");
     scrollElement.animate(
       [
         {

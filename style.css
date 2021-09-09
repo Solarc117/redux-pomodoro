@@ -30,7 +30,7 @@ body {
 }
 ::-webkit-scrollbar {
   appearance: none;
-  width: 10px;
+  width: 8px;
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
