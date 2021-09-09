@@ -264,7 +264,7 @@ document.querySelector("#main").onsubmit = async function (event) {
               reject(err);
               clearInterval(count);
             }
-          }, 50);
+          }, 1000);
         });
         log(countdown);
       } catch (err) {
