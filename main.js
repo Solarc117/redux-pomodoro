@@ -5,9 +5,6 @@ console.clear();
 function log() {
   console.log("📄", ...arguments);
 }
-function error() {
-  console.error("❌", ...arguments);
-}
 function messaging(str) {
   const message = document.getElementById("message");
   message.innerHTML = str;
@@ -21,9 +18,7 @@ function messaging(str) {
       duration: 2000,
     }
   );
-  setTimeout(() => {
-    message.innerHTML = "";
-  }, 2000);
+  setTimeout(() => message.innerHTML = "", 2000);
 }
 // Render a random quote.
 const quotes = [
@@ -244,12 +239,10 @@ document.querySelector("#main").onsubmit = async function (event) {
       } of ${total}`;
     }
     async function timer(sessionType, seconds, message = "") {
-      // Remember, this returns a promise, either resolved or rejected.
-      // A function that creates a custom timer for the number of secionds passed, returns the
       try {
         updateActivity(sessionType);
         const countdown = await new Promise((resolve, reject) => {
-          // I can mutate the seconds variable passed, because this function will be reused and mutating the argument passed does not mutate the original variable.
+          // The seconds variable passed can be mutated, because this function will be reused and mutating the argument passed does not mutate the original variable.
           const count = setInterval(() => {
             try {
               updateTime(secondsToMinutes(seconds));
@@ -268,10 +261,7 @@ document.querySelector("#main").onsubmit = async function (event) {
         });
         log(countdown);
       } catch (err) {
-        // Can I throw an error here? Will the outside catch{} block handle it?
         throw err;
-        // error(err);
-        // alert("Something went wrong. Please refresh and try again.");
       }
     }
 
@@ -320,7 +310,7 @@ document.querySelector("#main").onsubmit = async function (event) {
       options
     );
   } catch (err) {
-    error(err);
+    console.error("❌", err);
     alert("Something went wrong. Please refresh and try again.");
   }
 };
