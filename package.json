@@ -1,15 +1,35 @@
 {
-  "name": "pomodoro-v2",
+  "name": "pomodoro",
   "version": "0.0.0",
+  "description": "A pomodoro app built with Vite and Redux",
+  "engines": {
+    "node": "14.x"
+  },
+  "main": "main.js",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
     "serve": "vite preview"
   },
-  "devDependencies": {
-    "vite": "^2.5.1"
-  },
   "dependencies": {
-    "@reduxjs/toolkit": "^1.6.1"
-  }
+    "@reduxjs/toolkit": "^1.6.1",
+    "ejs": "^3.1.5",
+    "express": "^4.15.2"
+  },
+  "devDependencies": {
+    "vite": "^2.5.1",
+    "got": "^11.3.0",
+    "tape": "^4.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Solarc117/pomodoro"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express",
+    "vite"
+  ],
+  "license": "MIT"
 }
